@@ -1,0 +1,47 @@
+---
+title: "Homework 1"
+author: "Yue Gu $ Chenyi Yu"
+output: html_document
+---
+
+###Approximation of normal distribution 
+The way of simulating is Monte Carlo Methods
+$$\Phi(t)=\frac{1}{n}\sum_{i=1}^{n}I(X_{i}<t)$$
+where $x_{i}$ are iid N(0,1) variables
+We will perform the experinments at $n\in${$10^2,10^3,10^4$} and at $t\in${0.0,0.67,0.84,1.28,1.65,2.32,2.58,3.09,3.72}
+Here is the table of the experinment. 
+```{r}
+P <- function(n,t){
+  sample <- rnorm(n)
+  sample1 <- sample[sample<t]
+  phi <- length(sample1)/n
+}
+out <- NULL
+for (n in c(100,1000,10000)){
+  for (t in c(0.0,0.67,0.84,1.28,1.65,2.32,2.58,3.09,3.72)){
+     A <- P(n,t) 
+     out <- append(out,A)
+  }
+}
+table_data <- data.frame(out[1:9],out[10:18],out[19:27])
+rownames(table_data) <- c('0.0','0.67','0.84','1.28','1.65','2.32','2.58','3.09','3.72')
+library(knitr)
+kable(table_data, format="markdown",col.names =c('100','1000','10000'),caption="outcome of the experienment", padding=2)
+```
+Then we calculate the bias and draw the box plot at all t. 
+```{r}
+B <- function(n,t){
+  p=pnorm(t)
+  bias <- NULL
+for (i in (1:100)){  
+  B<-P(n,t)-p
+  bias <- append(bias,B)
+}
+  boxplot(bias,main=paste("n=",n,"and t=",t))
+}
+for (n in c(100,1000,10000)){
+  for (t in c(0.0,0.67,0.84,1.28,1.65,2.32,2.58,3.09,3.72)){
+    B(n,t)
+  }
+}
+```
